@@ -65,7 +65,6 @@
     <div class="container">
       <!--Section: Content-->
       <section class="text-center">
-
         <div class="row">
           <div class="col-lg-6 mb-4">
             {% for product in products %}
@@ -74,54 +73,177 @@
                 <div class="card-body">
                   <h3 class="card-title">{{product.name}}</h3>
                   <h4 class="card-text">Price: {{product.price}}$</h4>
-                
-                  <button class="btn btn-primary addtocart">Add to Cart</button>
+                  <button class="btn btn-primary addtocart" id="{{product.id}}" onClick="GFG_click(this.id)">Add to
+                    Cart</button>
                 </div>
               </div>
             </div>
             {% endfor %}
           </div>
+          <div class="col-lg-6 mb-4" id="TheCart">
 
-          <div class="col-lg-6 mb-4">
-            <!-- I am a comment! -->
-            {% for key,value in request.session.cart.items %}
-            <div class='col-md-4 col-lg-4'>
-              <div class="card" style="width: 18rem;">
-                <div class="card-body">
-                  <h3 class="card-title">{{value.name}}</h3>
-                  <h4 class="card-text">Quantity: {{value.quantity}}</h4>
-                  <a href="{% url 'item_increment' key %}" class="btn btn-primary addtocart">+</a>
-                  <a href="{% url 'item_decrement' key %}" class="btn btn-primary addtocart">-</a>
-                </div>
-              </div>
-            </div>
-            {% endfor %}
           </div>
         </div>
       </section>
-      <!--Section: Content-->
-
-      <!-- Pagination -->
-      <nav class="my-4" aria-label="..."> </nav>
     </div>
   </main>
-  <!--Main layout-->
 
-  <!--Footer-->
   <footer class="bg-light text-lg-start">
     <hr class="m-0" />
-    <!-- Copyright -->
     <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
       © 2022 Copyright:
       <a class="text-dark" href="https://github.com/rthenamvar">Reza Namvar</a>
     </div>
-    <!-- Copyright -->
   </footer>
-  <!--Footer-->
-  <!-- MDB -->
   <script type="text/javascript" src="{% static 'js/mdb.min.js' %}"></script>
-  <!-- Custom scripts -->
+
   <script type="text/javascript" src="{% static 'js/script.js' %}"></script>
+  <script>
+    function GFG_click(clicked) {
+      console.log(clicked);
+      const formData = new FormData();
+      formData.append('id', clicked);
+      fetch('cart/add/', {
+          method: 'POST',
+          body: formData
+        })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          theCart = document.getElementById("TheCart");
+          theCart.innerHTML = "";
+          Object.entries(data).forEach((entry) => {
+            const [key, value] = entry;
+
+            const thirdDiv = document.createElement('div');
+            thirdDiv.setAttribute('class', 'card-body');
+
+            if (key === "shoes") {
+              id = "1";
+            } else if (key === "food") {
+              id = "2"
+            } else if (key === "laptop") {
+              id = "3"
+            }
+            const h3 = document.createElement('h3');
+            h3.setAttribute('class', 'card-title');
+            h3.innerHTML = `${key}`;
+
+            const h4 = document.createElement('h4');
+            h4.setAttribute('class', 'card-text');
+            h4.innerHTML = `${value}`;
+
+            const addB = document.createElement('button');
+            addB.setAttribute('class', 'btn btn-primary addtocart');
+            addB.setAttribute('id', "" + id + "");
+            addB.setAttribute('onClick', 'GFG_click(this.id)');
+            addB.innerHTML = `+`;
+
+            const decB = document.createElement('button');
+            decB.setAttribute('class', 'btn btn-primary addtocart');
+            decB.setAttribute('id', "" + id + "");
+            decB.setAttribute('onClick', 'GFG_click_dec(this.id)');
+            decB.innerHTML = `-`;
+
+            thirdDiv.appendChild(h3);
+            thirdDiv.appendChild(h4);
+            thirdDiv.appendChild(addB);
+            thirdDiv.appendChild(decB);
+
+            //theCart.appendChild(thirdDiv);
+
+            const secDiv = document.createElement('div');
+            secDiv.setAttribute('class', 'card');
+            secDiv.setAttribute('style', 'width: 18rem;');
+            secDiv.appendChild(thirdDiv);
+
+            const firDiv = document.createElement('div');
+            firDiv.setAttribute('class', 'col-md-4 col-lg-4');
+            firDiv.appendChild(secDiv);
+            
+            theCart.appendChild(firDiv);
+
+            //console.log(theCart.innerHTML)
+          });
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+    function GFG_click_dec(clicked) {
+      console.log(clicked);
+      const formData = new FormData();
+      formData.append('id', clicked);
+      fetch('cart/decrement/', {
+          method: 'POST',
+          body: formData
+        })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          theCart = document.getElementById("TheCart");
+          theCart.innerHTML = "";
+          Object.entries(data).forEach((entry) => {
+            const [key, value] = entry;
+
+            const thirdDiv = document.createElement('div');
+            thirdDiv.setAttribute('class', 'card-body');
+
+            if (key === "shoes") {
+              id = "1";
+            } else if (key === "food") {
+              id = "2"
+            } else if (key === "laptop") {
+              id = "3"
+            }
+            const h3 = document.createElement('h3');
+            h3.setAttribute('class', 'card-title');
+            h3.innerHTML = `${key}`;
+
+            const h4 = document.createElement('h4');
+            h4.setAttribute('class', 'card-text');
+            h4.innerHTML = `${value}`;
+
+            const addB = document.createElement('button');
+            addB.setAttribute('class', 'btn btn-primary addtocart');
+            addB.setAttribute('id', "" + id + "");
+            addB.setAttribute('onClick', 'GFG_click(this.id)');
+            addB.innerHTML = `+`;
+
+            const decB = document.createElement('button');
+            decB.setAttribute('class', 'btn btn-primary addtocart');
+            decB.setAttribute('id', "" + id + "");
+            decB.setAttribute('onClick', 'GFG_click_dec(this.id)');
+            decB.innerHTML = `-`;
+
+            thirdDiv.appendChild(h3);
+            thirdDiv.appendChild(h4);
+            thirdDiv.appendChild(addB);
+            thirdDiv.appendChild(decB);
+
+            //theCart.appendChild(thirdDiv);
+
+            const secDiv = document.createElement('div');
+            secDiv.setAttribute('class', 'card');
+            secDiv.setAttribute('style', 'width: 18rem;');
+            secDiv.appendChild(thirdDiv);
+
+            const firDiv = document.createElement('div');
+            firDiv.setAttribute('class', 'col-md-4 col-lg-4');
+            firDiv.appendChild(secDiv);
+            
+            theCart.appendChild(firDiv);
+
+            //console.log(theCart.innerHTML)
+          });
+       })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+  </script>
 </body>
 
 </html>

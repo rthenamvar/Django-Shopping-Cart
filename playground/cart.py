@@ -1,4 +1,6 @@
 from decimal import Decimal
+import json
+from math import prod
 from os import remove
 from django.conf import settings
 from django.http import HttpResponse
@@ -23,7 +25,7 @@ class Cart(object):
         id = product.id
         newItem = True
         if str(product.id) not in self.cart.keys():
-
+            print("Here from addS")
             self.cart[product.id] = {
                 'product_id': id,
                 'name': product.name,
@@ -50,6 +52,13 @@ class Cart(object):
                     'price': str(product.price),
                     'image': product.image.url
                 }
+        
+        #return self.cart  
+        data = {}
+        for key, value in self.cart.items():
+            data[value['name']] = value['quantity']
+        print(data)
+        return data      
 
         self.save()
 
@@ -75,10 +84,14 @@ class Cart(object):
                 if(value['quantity'] < 1):
                     del self.cart[str(product.id)]
                 self.save()
-                return redirect('store')    
                 break
             else:
                 print("Something Wrong")
+        data = {}
+        for key, value in self.cart.items():
+            data[value['name']] = value['quantity']
+        print(data)
+        return data
 
     def clear(self):
         # empty cart
